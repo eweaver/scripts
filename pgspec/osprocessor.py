@@ -1,9 +1,12 @@
 import os
 
+__PID_FILE__ = "pgspec.pid"
+
 class OsProcessor:
     root_path = ""
     last_path = ""
     origin = ""
+    pid = None
 
     def __init__(self, root_path):
         self.root_path = root_path
@@ -22,3 +25,23 @@ class OsProcessor:
 
     def return_to_origin(self):
         return os.chdir(self.origin)
+
+    def start_pid(self):
+        if self.file_exists(__PID_FILE__):
+            return False
+
+        self.pid = os.getpgid(0)
+        cur = os.getcwd()
+        os.chdir(self.root_path)
+        fo = open(__PID_FILE__, "w")
+        fo.write(str(self.pid))
+        fo.close()
+        os.chdir(cur)
+        return True
+
+    def end_pid(self):
+        cur = os.getcwd()
+        os.chdir(self.root_path)
+        self.pid = None
+        os.remove(__PID_FILE__)
+        os.chdir(cur)

@@ -5,15 +5,20 @@ from subprocess import Popen, PIPE
 import osprocessor
 
 class GitCommands:
-    def __init__(self, os_processor):
+    def __init__(self, os_processor, branch):
         self.os_processor = os_processor
+        self.branch = branch
 
     def status_branch(self):
         self.os_processor.change_to_root()
 
         specs = []
-        p = Popen(['git', '-c', 'color.status=false', 'diff', '--name-status', 'origin/master'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        remote = self.branch if self.branch != None else 'origin/master'
+        p = Popen(['git', '-c', 'color.status=false', 'diff', '--name-status', remote], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, err = p.communicate()
+
+        if err:
+            print "\n" + err
 
         regex = re.compile('\s*[AM]+\s*(spec|app)(.*)', re.IGNORECASE)
         return regex.findall(output)

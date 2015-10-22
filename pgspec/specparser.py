@@ -12,10 +12,14 @@ class SpecParser:
             path = directory[1:] + "/"
         else:
             path = ""
-
         for regex_results in changes:
             if isinstance(regex_results, basestring):
-                file_path = regex_results
+                if path == "app/":
+                    file_path = regex_results.replace('.rb', '_spec.rb')
+                    specs.append("spec/" + file_path)
+                else:
+                    file_path = regex_results
+                    specs.append(path + file_path)
             else:
                 if regex_results[0] == "spec":
                     spec_name = regex_results[1]
@@ -23,8 +27,7 @@ class SpecParser:
                     spec_name = regex_results[1].replace('.rb', '_spec.rb')
 
                 file_path = "spec" + spec_name
-
-            specs.append(path + file_path)
+                specs.append(path + file_path)
 
         return specs
 

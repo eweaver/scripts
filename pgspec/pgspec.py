@@ -39,12 +39,13 @@ from gitcommands import GitCommands
 from specparser import SpecParser
 from osprocessor import OsProcessor
 
-__CONFIG_FILE__ = "pgspec.conf"
+__CONFIG_FILE__ = "/Users/eweaver/Development/scripts/pgspec/pgspec.conf"
 __CONFIG_ITEM_PATH__ = "PATHGATHER_DIRECTORY"
 
 parser = argparse.ArgumentParser(description='Run specs for files that have changed.')
 parser.add_argument("-p", "--path", dest="path")
 parser.add_argument("-s", "--seed", dest="seed")
+parser.add_argument("-b", "--branch", dest="branch")
 parser.add_argument("-a", "--all", dest="allchanges", action="store_true")
 args = parser.parse_args()
 root_path = None
@@ -68,7 +69,12 @@ if root_path == None:
 ### SETUP ###
 specs = []
 os_processor = OsProcessor(root_path)
-git = GitCommands(os_processor)
+if os_processor.start_pid() == False:
+    print "Process already running"
+    exit(0)
+
+
+git = GitCommands(os_processor, args.branch)
 parser = SpecParser()
 
 print "Checking for specs to run..."
@@ -99,10 +105,10 @@ for idx, spec in enumerate(unique_specs):
 
 if len(valid_specs) == 0:
     print "Nothing to run"
+    os_processor.end_pid()
     exit(0)
 else:
     print "Found " + str(len(valid_specs)) + " specs to run"
-
 
 ### RUN SPECS ###
 rspec = ["rspec", "-c", "-f", "d"]
@@ -112,4 +118,5 @@ if args.seed:
 rspec.extend(valid_specs)
 subprocess.call(rspec)
 
+os_processor.end_pid()
 os_processor.return_to_origin()
