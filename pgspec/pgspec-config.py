@@ -10,7 +10,12 @@
 
 __CONFIG_FILE__ = "pgspec.conf"
 
-str = raw_input("Pathgather repository location: ");
 fo = open(__CONFIG_FILE__, "w")
+
+str = raw_input("Pathgather repository location: ");
 fo.write("PATHGATHER_DIRECTORY=" + str)
+
+str = raw_input("PGSpec location: ");
+fo.write("PGSPEC_DIRECTORY=" + str)
+
 fo.close()

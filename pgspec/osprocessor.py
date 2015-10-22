@@ -43,5 +43,7 @@ class OsProcessor:
         cur = os.getcwd()
         os.chdir(self.root_path)
         self.pid = None
-        os.remove(__PID_FILE__)
+        if os.path.isfile(self.root_path + "/" + __PID_FILE__):
+            os.remove(__PID_FILE__)
+
         os.chdir(cur)
