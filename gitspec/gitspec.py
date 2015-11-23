@@ -74,7 +74,7 @@ if root_path == None:
 os_processor = OsProcessor(root_path)
 
 ### Some cleanup, perhaps? ###
-if args.cleanup == True:
+if args.cleanup:
     print "Forcing run, cleaning up previous run..."
     os_processor.end_pid()
 
